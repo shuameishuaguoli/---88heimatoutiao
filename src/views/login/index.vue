@@ -107,6 +107,15 @@ export default {
             window.localStorage.setItem('token', res.data.data.token)
             // 将token存到本地之后需要跳转到首页
             this.$router.push('/home')
+          }).catch(() => {
+            // 当用户输入错误的时候进行一下友好的提示
+            this.$message({
+              message: '请输入正确的手机号及验证码',
+              type: 'warning'
+            })
+            // 登录失败之后将登录框中的内容进行清空
+            this.ruleForm.mobile = ''
+            this.ruleForm.code = ''
           })
         }
       })
