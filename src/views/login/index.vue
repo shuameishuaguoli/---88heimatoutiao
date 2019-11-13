@@ -19,9 +19,9 @@
         ref="ruleForm"
         >
             <!-- 手机号输入框 -->
-            <el-form-item prop="phone">
+            <el-form-item prop="mobile">
               <!-- 在input框中使用v-model将input框中的数据进行双向绑定 -->
-              <el-input v-model="ruleForm.phone" placeholder="请输入您的手机号"></el-input>
+              <el-input v-model="ruleForm.mobile" placeholder="请输入您的手机号"></el-input>
             </el-form-item>
             <!-- 手机号输入框 -->
 
@@ -63,9 +63,10 @@ export default {
 
   data () {
     return {
+      // 定义的所以数据的集合
       ruleForm: {
         // 获取手机号的数据
-        phone: '',
+        mobile: '',
         // 获取验证码的数据
         code: '',
         // 判断用户是否进行了勾选 因为是一个复选框，所以要将默认值设置成一个布尔值
@@ -73,7 +74,7 @@ export default {
       },
       rules: {
         // 手机号的验证规则  第一条规则是判断非空  trigger是什么时候进行判断，失去光标焦点的时候进行判断  pattern是写正则规则的
-        phone: [{ required: true, message: '请输入您的手机号', trigger: 'blur' }, { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号', trggle: 'blur' }],
+        mobile: [{ required: true, message: '请输入您的手机号', trigger: 'blur' }, { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号', trggle: 'blur' }],
         code: [{ required: true, message: '请输入您的验证码', trigger: 'blur' },
           { pattern: /^\d{6}$/, message: '请输入正确的验证码', trigger: 'blur' }
         ],
@@ -86,9 +87,27 @@ export default {
     onLogin () {
       // alert('点击登录')
       // 验证整个表单是否符合规则 this.$refs.ruleForm是获取form表单中的内容，手动点击登录进行验证  this.$refs是获取DOM节点的方法。。
-      this.$refs.ruleForm.validate(res => {
-        if (res) {
-          console.log('登录成功')
+      this.$refs.ruleForm.validate(isOK => {
+        // alert('点击登录')
+        if (isOK) {
+          // 测试一下  这里需要注意，传输的数据一定要和接口文档中的数据一致
+          // console.log('登录成功')
+          // 请求成功之后需要将请求接口
+          this.$axios({
+            // 接口地址
+            url: '/authorizations',
+            // 请求数据
+            data: this.ruleForm,
+            // 请求方式
+            method: 'post'
+          }).then(res => {
+            // 打印一下
+            // console.log(res)
+            // 需要将获取到的res中的token值存到本地
+            window.localStorage.setItem('token', res.data.data.token)
+            // 将token存到本地之后需要跳转到首页
+            this.$router.push('/home')
+          })
         }
       })
     }
