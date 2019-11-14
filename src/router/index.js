@@ -8,7 +8,7 @@ Vue.use(VueRouter)
 
 const routes = [{
   path: '/',
-  redirect: '/login'
+  redirect: '/home'
 }, {
   // 配置登录页路由
   path: '/login',
@@ -18,7 +18,7 @@ const routes = [{
   path: '/home',
   component: home
 }
-  // 按需加载的路由
+  // 配置按需加载的路由
   // {
   //   path: '/about',
   //   name: 'about',
