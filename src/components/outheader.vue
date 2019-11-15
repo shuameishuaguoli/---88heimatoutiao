@@ -50,8 +50,8 @@
                         <!-- 填一下GitHub地址 -->
                         <a href="https://github.com/shuameishuaguoli">git地址</a>
                       </el-dropdown-item>
-                      <el-dropdown-item>
-                        账户信息
+                      <el-dropdown-item @click.native="onGoout">
+                        退出
                       </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -66,6 +66,15 @@
 export default {
   data () {
     return {
+    }
+  },
+  methods: {
+    onGoout () {
+      // 点击了退出之后需要做两件事儿
+      // 第一件事儿是：销毁本地的token值
+      window.localStorage.removeItem('token')
+      // 第二件事儿是跳转到登录页面
+      this.$router.push('/')
     }
   }
 }
