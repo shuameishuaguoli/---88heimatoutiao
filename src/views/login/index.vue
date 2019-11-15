@@ -106,7 +106,7 @@ export default {
             // 需要将获取到的res中的token值存到本地
             window.localStorage.setItem('token', res.data.data.token)
             // 将token存到本地之后需要跳转到首页
-            this.$router.push('/home')
+            this.$router.push('/layout')
           }).catch(() => {
             // 当用户输入错误的时候进行一下友好的提示
             this.$message({
