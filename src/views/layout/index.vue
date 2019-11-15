@@ -6,7 +6,9 @@
         <div class="left-img" style="width: 218px">
           <img src="../../assets/img/logo_admin.png" alt="">
         </div>
-        <!-- 下拉菜单 mode="horizontal" 默认是垂直方向，可以通过mode改变成水平方向 -->
+        <!-- 下拉菜单 mode="horizontal" 默认是垂直方向，可以通过mode改变成水平方向
+          router属性是我们要点击二级菜单的时候需要进行跳转，router的默认是false，router的值是一个默认值
+        -->
         <el-menu
         :default-active="activeIndex"
         class="el-menu-demo"
@@ -14,12 +16,13 @@
         background-color="#353b4e"
         text-color="#adafb5"
         style="width:220px;"
+        router
         >
-            <el-menu-item index="1">首页</el-menu-item>
+            <el-menu-item index="/layout">首页</el-menu-item>
             <el-submenu index="2">
               <template slot="title">内容管理</template>
-              <el-menu-item index="2-1">发布文章</el-menu-item>
-              <el-menu-item index="2-2">内容列表</el-menu-item>
+              <el-menu-item index="/article">发布文章</el-menu-item>
+              <el-menu-item index="/content">内容列表</el-menu-item>
               <el-menu-item index="2-3">评论列表</el-menu-item>
               <el-menu-item index="2-4">素材管理</el-menu-item>
             </el-submenu>

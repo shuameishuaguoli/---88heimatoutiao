@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 // 引入登录页组件
-import login from '../views/login'
+import login from '@/views/login'
 // 引入布局组件这个布局组件中布局了侧边栏，头部，中间内容部分
-import Layout from '../views/layout/'
+import Layout from '@/views/layout/'
 // 引入首页
-import home from '../views/home/'
+import home from '@/views/home/'
 // 引入发布文章组件
-import article from '../views/article/'
+import article from '@/views/article/'
 // 引入content 内容列表组件
-import content from '../views/content/'
+import content from '@/views/content/'
 // 引入nprogress包
 import NProgress from 'nprogress'
 Vue.use(VueRouter)
@@ -26,10 +26,10 @@ const routes = [{
     path: '/',
     component: home // 默认显示的是首页
   }, {
-    path: 'article',
+    path: '/article',
     component: article // 发布文章页面
   }, {
-    path: 'content',
+    path: '/content',
     component: content // 内容页面
   }]
 }
