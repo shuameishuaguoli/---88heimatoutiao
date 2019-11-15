@@ -8,6 +8,9 @@ import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 // 引入index.less
 import './style/index.less'
+// 引入nprogress的css文件
+import 'nprogress/nprogress.css'
+
 // 引入axios
 import axios from 'axios'
 // 这是开发模式   false是开发模式，true时生产模式

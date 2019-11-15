@@ -60,6 +60,7 @@
                   prefix-icon="el-icon-search"
                   v-model="search"
                   placeholder="请输入搜索的文章内容"
+                  autofocus="autofocus"
                   ></el-input>
               </el-tooltip>
             </div>
@@ -110,12 +111,28 @@ export default {
     return {
 
     }
+  },
+  // 方法区
+  methods: {
+    // 封装一个方法，当页面加载的时候调用这个方法
+    warning () {
+      this.$notify({
+        title: '警告',
+        message: '煞笔以为学习好，在社会就能站得住，到了工作岗位发现自己只会尼玛算术！',
+        type: 'warning'
+      })
+    }
+  },
+  // 页面加载的时候执行，但是实例还没有创建好
+  created () {
+    // 调用一下警告的方法
+    this.warning()
   }
 }
 </script>
 
 <style lang="less" scope>
-      // 给子菜单添加一下鼠标悬停的样式  但是，这里的el-menu-item是一个标签名，为什么需要加上.点呢？加点 . 不是给类选择器吗？搞不懂了
+      // 给子菜单添加一下鼠标悬停的样式  但是，这里的el-menu-item是一个标签名，为什么需要加上.点呢？加点 . 不是给类选择器吗？搞不懂了，老师讲，在elementui中的标签名不能当做标签来使，如果要给elementui添加自定义样式，就要给标签名加  .   因为在浏览器中渲染出来的结果是普通标签，但是elementui的标签名就已经渲染成了普通标签的类名了，所以给elementui的标签添加自定义样式的时候，是用.标签名的样式来自定义样式
     .el-submenu .el-menu-item:hover{
         // 提高一下权重
         background-color: #409eff !important;
