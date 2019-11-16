@@ -6,7 +6,7 @@
         <span>全部图文</span>
       </div>
         <el-form ref="form" :model="form">
-          <el-form-item label="活动名称">
+          <el-form-item label="文章状态">
             <el-radio-group v-model="formdata.status">
               <!-- 什么都不穿则显示查询（全部）内容 -->
               <el-radio :label="null">全部</el-radio>
@@ -19,9 +19,15 @@
           </el-form-item>
           <!-- 下拉框 -->
           <el-form-item label="频道列表">
-            <el-select   placeholder="请选择活动区域" v-model="formdata.city">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
+            <el-select   placeholder="请选择活动区域" v-model="formdata.channel_id">
+              <!-- value的值为空的时候就是查询全部的内容 -->
+              <el-option label="所有频道" :value="null"></el-option>
+              <el-option
+                v-for="channel in channellist"
+                :label="channel.name"
+                :value="channel.id"
+                :key="channel.id"
+                ></el-option>
             </el-select>
           </el-form-item>
           <!-- 时间选择 v-model=""-->
@@ -157,8 +163,8 @@ export default {
       formdata: {
         // 单选框的数据初始化 初始化的这个活动名称的这个值需要是一个null不能是一个字符串的''空
         status: null,
-        // 下拉框的数据初始化
-        city: '',
+        // 定义要给变量，这个变量是后面发送频道列表用的，这个变量是用来接收要给数字，因为接口文档中有null这个值，所以要我们要将这个变量的初始化为一个null值
+        channel_id: null,
         // 初始时间   开始时间  结束时间
         begin_pubdate: '',
         end_pubdate: ''
@@ -168,7 +174,9 @@ export default {
       // 定义一个变量，用来接收总页数
       pageCount: 0,
       // 定义一个变量，用来初始化loading的数据  等待加载页面 初始化的值是false
-      loading: false
+      loading: false,
+      // 定义一个空数组用来接收从服务器响应回来的频道列表，为什么定义一个空数组呢，因为响应回来的数据是放到了一个数组中，所有我们初始化这个变量的时候就要初始化一个空数组
+      channellist: []
     }
   },
   // 方法区
@@ -192,7 +200,9 @@ export default {
           // 传一个page表示显示第几页，页面效果是点击第几页就显示第几页
           page,
           // status的值的意思是将文章状态的相对应的文章显示出来
-          status: this.formdata.status
+          status: this.formdata.status,
+          // channel_id的值的意思是查询相对应的频道列表的内容，这里还是利用了axios的一个特性就是：当params中的键的值为null的时候，axios就默认不发送这个参数，就当这个参数是不存在的
+          channel_id: this.formdata.channel_id
         },
         // 这里需要给将token放到请求头中，带到后台服务器
         headers: {
@@ -225,12 +235,30 @@ export default {
     // 点击编辑按钮
     onEdit () {
       alert('我是编辑按钮')
+    },
+    // 获取频道列表的方法，里面发送一个请求
+    Channellist () {
+      this.$axios({
+        url: '/channels',
+        mothed: 'GET'
+      }).then(res => {
+        // 打印一下响应回来的数据
+        console.log(res)
+        // 我们将响应回来的数据赋值给到我们定义好的空数组中
+        this.channellist = res.data.data.channels
+        console.log(this.channellist)
+      }).catch(err => {
+        console.log('请求失败！', err)
+      })
     }
   },
   // 创建实例阶段
-  created () {
   // 在还没有创建实例之前调用一下获取所有内容的方法
+  created () {
+    // 获取所有文章数据列表
     this.getcontent()
+    // 获取所有的频道列表
+    this.Channellist()
   }
 }
 </script>
