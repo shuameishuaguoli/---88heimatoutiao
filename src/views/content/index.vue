@@ -30,13 +30,18 @@
                 ></el-option>
             </el-select>
           </el-form-item>
-          <!-- 时间选择 v-model=""-->
+          <!-- 时间选择
+          使用v-model="" 绑定模型中的数据
+          value-format是指定绑定值的格式
+          -->
           <el-form-item label="时间选择">
             <el-date-picker
               type="daterange"
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
+              v-model="rangeDate"
+              value-format="yyyy-MM-dd"
             >
             </el-date-picker>
           </el-form-item>
@@ -164,10 +169,10 @@ export default {
         // 单选框的数据初始化 初始化的这个活动名称的这个值需要是一个null不能是一个字符串的''空
         status: null,
         // 定义要给变量，这个变量是后面发送频道列表用的，这个变量是用来接收要给数字，因为接口文档中有null这个值，所以要我们要将这个变量的初始化为一个null值
-        channel_id: null,
+        channel_id: null
         // 初始时间   开始时间  结束时间
-        begin_pubdate: '',
-        end_pubdate: ''
+        // begin_pubdate: '',
+        // end_pubdate: ''
       },
       // 定义一个数组，用来接收从服务器返回来的结果
       listdata: [],
@@ -176,7 +181,9 @@ export default {
       // 定义一个变量，用来初始化loading的数据  等待加载页面 初始化的值是false
       loading: false,
       // 定义一个空数组用来接收从服务器响应回来的频道列表，为什么定义一个空数组呢，因为响应回来的数据是放到了一个数组中，所有我们初始化这个变量的时候就要初始化一个空数组
-      channellist: []
+      channellist: [],
+      // 定义一个接收时间的变量 开始时间和结束时间
+      rangeDate: []
     }
   },
   // 方法区
@@ -202,7 +209,11 @@ export default {
           // status的值的意思是将文章状态的相对应的文章显示出来
           status: this.formdata.status,
           // channel_id的值的意思是查询相对应的频道列表的内容，这里还是利用了axios的一个特性就是：当params中的键的值为null的时候，axios就默认不发送这个参数，就当这个参数是不存在的
-          channel_id: this.formdata.channel_id
+          channel_id: this.formdata.channel_id,
+          // 起始时间
+          begin_pubdate: this.rangeDate[0],
+          // 截止时间
+          end_pubdate: this.rangeDate[1]
         },
         // 这里需要给将token放到请求头中，带到后台服务器
         headers: {
