@@ -23,10 +23,9 @@
               <el-option label="区域二" value="beijing"></el-option>
             </el-select>
           </el-form-item>
-          <!-- 时间选择 -->
+          <!-- 时间选择 v-model=""-->
           <el-form-item label="时间选择">
             <el-date-picker
-              v-model="value1"
               type="daterange"
               range-separator="至"
               start-placeholder="开始日期"
@@ -51,9 +50,12 @@
       </div>
       <div>
         <template>
+          <!-- v-loading是等待加载表格数据的等待状态 -->
           <el-table
+            v-loading="loading"
             :data="listdata"
-            style="width: 100%">
+            style="width: 100%"
+            >
             <el-table-column
               prop="data"
               label="封面"
@@ -109,7 +111,6 @@
           background是背景色
           :total 表示的是总页数  这里的总页数的表现是：我们只需要将总记录的条数传递给       :tatle，elementUI中的分页插件会自动帮我们计算出总页数，其实这个插件的每页的条数默认是10条，总数据/10就是总页数，这个计算过程是分页插件帮我们做了，不需要我们自己来算
           @current-change="onPageChange"是注册事件
-
        -->
       <el-pagination
         background
@@ -157,7 +158,9 @@ export default {
       // 定义一个数组，用来接收从服务器返回来的结果
       listdata: [],
       // 定义一个变量，用来接收总页数
-      pageCount: 0
+      pageCount: 0,
+      // 定义一个变量，用来初始化loading的数据  等待加载页面 初始化的值是false
+      loading: false
     }
   },
   // 方法区
@@ -165,6 +168,8 @@ export default {
     // 定义一个发送请求的方法，这个请求中获取了所有的文章数据
     // 这里写了一个page=1的意思是，如果是第一次加载页面的时候，我们是默认显示的是第一条的数据，所以这里要给page一个默认值1；
     getcontent (page = 1) {
+      // 这里将loading的值设置为true一下，因为只有设置成true了，等待加载的效果就激活成功了
+      this.loading = true
       // 获取一下token值
       const token = window.localStorage.getItem('token')
       // 发送axios请求
@@ -188,11 +193,14 @@ export default {
         this.pageCount = res.data.data.total_count
         // 打印一下这个数组
         console.log(this.listdata)
+      }).finally(() => {
+        // 当数据响应成功之后需要将loading的值设置为false
+        this.loading = false
       })
     },
     // // 点击页面的时候调用的方法，这个形参page是这个事件的默认参数，形参名字随便写
     onPageChange (page) {
-      // console.log(page)
+      console.log(page)
       // 现在这个当前页面的页码获取到了，需要将这个页面 发送请求
       this.getcontent(page)
     },
