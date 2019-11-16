@@ -50,7 +50,10 @@
       </div>
       <div>
         <template>
-          <!-- v-loading是等待加载表格数据的等待状态 -->
+          <!--
+            v-loading是等待加载表格数据的等待状态
+                v-loading的值是一个布尔值，如果为true，则是加载状态，值为false，则是关闭状态
+            -->
           <el-table
             v-loading="loading"
             :data="listdata"
@@ -111,12 +114,15 @@
           background是背景色
           :total 表示的是总页数  这里的总页数的表现是：我们只需要将总记录的条数传递给       :tatle，elementUI中的分页插件会自动帮我们计算出总页数，其实这个插件的每页的条数默认是10条，总数据/10就是总页数，这个计算过程是分页插件帮我们做了，不需要我们自己来算
           @current-change="onPageChange"是注册事件
+          disabled属性是设置页码是否禁用，这里需要传入一个布尔值，我们在这里将loading的值进行了传入，因为loading的是就是一个布尔值，达到的页面效果就是：当页面进行加载的时候需要，就需要让页码禁用，当加载完毕后，就将页码禁用功能进行关闭
        -->
       <el-pagination
         background
         layout="prev, pager, next"
         @current-change="onPageChange"
-        :total="pageCount">
+        :total="pageCount"
+        :disabled="loading"
+        >
       </el-pagination>
     </el-card>
     <!-- 分页end -->
