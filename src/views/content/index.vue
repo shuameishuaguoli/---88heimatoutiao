@@ -8,6 +8,7 @@
         <el-form ref="form" :model="form">
           <el-form-item label="活动名称">
             <el-radio-group v-model="formdata.status">
+              <!-- 什么都不穿则显示查询（全部）内容 -->
               <el-radio :label="null">全部</el-radio>
               <el-radio label="0">草稿</el-radio>
               <el-radio label="1">待审核</el-radio>
@@ -35,7 +36,8 @@
           </el-form-item>
           <!-- 查询按钮 -->
           <el-form-item>
-              <el-button type="primary" @click="onQuery">查询</el-button>
+              <!-- 给查询按钮注册事件的时候，调用的就是查询所有数据的方法，里面传的这个1就是默认从第一页显示 -->
+              <el-button type="primary" @click="getcontent(1)">查询</el-button>
           </el-form-item>
         </el-form>
       <div>
@@ -153,8 +155,8 @@ export default {
       }],
       // 初始化表单中的数据
       formdata: {
-        // 单选框的数据初始化
-        status: '',
+        // 单选框的数据初始化 初始化的这个活动名称的这个值需要是一个null不能是一个字符串的''空
+        status: null,
         // 下拉框的数据初始化
         city: '',
         // 初始时间   开始时间  结束时间
@@ -181,12 +183,16 @@ export default {
       // 发送axios请求
       this.$axios({
         // url地址
+        // 这个接口中有好多参数，但是所有参数都不是必填的，都是选填的，后台这么设计，就可以做到，当我们传什么条件的时候，这个接口返回的就是根据我们提供的条件查出来的数据
         url: '/articles',
         // 请求方式
         method: 'GET',
         // 根据接口文档，查询(query)数据，发送的时候是写到params中的，params是和url，method这些参数是同级的，params的参数类型是一个对象类型
         params: {
-          page
+          // 传一个page表示显示第几页，页面效果是点击第几页就显示第几页
+          page,
+          // status的值的意思是将文章状态的相对应的文章显示出来
+          status: this.formdata.status
         },
         // 这里需要给将token放到请求头中，带到后台服务器
         headers: {
@@ -209,20 +215,6 @@ export default {
       console.log(page)
       // 现在这个当前页面的页码获取到了，需要将这个页面 发送请求
       this.getcontent(page)
-    },
-    // 点击查询按钮发送请求
-    onQuery () {
-      // 发送axios发送请求
-      this.$axios({
-        // 请求地址
-        url: '/articles',
-        // 请求方式
-        method: 'GET',
-        // 因为接口文档中的查询参数是query，所以我们要写到params中
-        params: {
-
-        }
-      })
     },
     // 点击删除按钮
     onDelete () {
