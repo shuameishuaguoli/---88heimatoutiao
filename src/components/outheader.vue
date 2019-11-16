@@ -51,7 +51,7 @@
                         <a href="https://github.com/shuameishuaguoli">git地址</a>
                       </el-dropdown-item>
                       <el-dropdown-item @click.native="onGoout">
-                        退出
+                        <el-button type="text" >退出</el-button>
                       </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -60,6 +60,13 @@
           </div>
         </el-header>
         <!-- 对头部信息进行布局end -->
+        <!--
+          // 点击了退出之后需要做两件事儿
+      // 第一件事儿是：销毁本地的token值
+      window.localStorage.removeItem('token')
+      // 第二件事儿是跳转到登录页面
+      this.$router.push('/')
+         -->
 </template>
 
 <script>
@@ -70,11 +77,26 @@ export default {
   },
   methods: {
     onGoout () {
-      // 点击了退出之后需要做两件事儿
+      this.$confirm('确定要退出吗', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 点击了退出之后需要做两件事儿
       // 第一件事儿是：销毁本地的token值
-      window.localStorage.removeItem('token')
-      // 第二件事儿是跳转到登录页面
-      this.$router.push('/')
+        window.localStorage.removeItem('token')
+        // 第二件事儿是跳转到登录页面
+        this.$router.push('/')
+        this.$message({
+          type: 'success',
+          message: '您已退出'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消退出'
+        })
+      })
     }
   }
 }

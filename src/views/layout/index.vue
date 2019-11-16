@@ -7,12 +7,10 @@
           <img src="../../assets/img/logo_admin.png" alt="">
         </div>
         <!-- 下拉菜单 mode="horizontal" 默认是垂直方向，可以通过mode改变成水平方向
-          router属性是我们要点击二级菜单的时候需要进行跳转，router的默认是false，router的值是一个默认值
+          router属性是我们要点击二级菜单的时候需要进行跳转，router的默认是false，router的值是一个默认值:default-active="activeIndex    @select="handleSelect""
         -->
         <el-menu
-        :default-active="activeIndex"
         class="el-menu-demo"
-        @select="handleSelect"
         background-color="#353b4e"
         text-color="#adafb5"
         style="width:220px;"

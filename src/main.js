@@ -10,7 +10,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './style/index.less'
 // 引入nprogress的css文件
 import 'nprogress/nprogress.css'
-
+// 引入json-bigint
+import JSONbig from 'json-bigint'
 // 引入axios
 import axios from 'axios'
 // 这是开发模式   false是开发模式，true时生产模式
@@ -22,6 +23,17 @@ Vue.use(Element)
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'
 // 将axios挂载到Vue的方法区，这样所有的vue实例就都有了$axios这属性了
 Vue.prototype.$axios = axios
+// 配置axios自定义后端数据转换规则
+axios.defaults.transformResponse = [ function (data) {
+// 这里我们手动配置一下JSON.parse(data)
+  try {
+    return JSONbig.parse(data)
+  } catch (error) {
+    // 一旦try中有异常，就进入catch中
+    console.log(error)
+    return {}
+  }
+} ]
 
 new Vue({
   // 目的是为了让vue与router产生关系，就要将router挂载到Vue实例中

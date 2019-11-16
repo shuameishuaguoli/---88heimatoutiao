@@ -5,7 +5,7 @@
       <div slot="header" class="clearfix">
         <span>全部图文</span>
       </div>
-        <el-form ref="form" :model="form">
+        <el-form>
           <el-form-item label="文章状态">
             <el-radio-group v-model="formdata.status">
               <!-- 什么都不穿则显示查询（全部）内容 -->
@@ -106,9 +106,9 @@
               prop="address"
               label="操作">
               <!-- 两个按钮也是使用template标签  自定义标签-->
-              <template>
-                <el-button type="danger" @click.native="onDelete">删除</el-button>
-                <el-button type="primary" @click.native="onEdit">编辑</el-button>
+              <template slot-scope="scope">
+                <el-button type="danger" @click="onDelete(scope.row.id)">删除</el-button>
+                <el-button type="primary" @click="onEdit">编辑</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -144,7 +144,7 @@
 
 <script>
 export default {
-  name: 'content',
+  name: 'contents',
   // 模型区
   data () {
     return {
@@ -183,7 +183,8 @@ export default {
       // 定义一个空数组用来接收从服务器响应回来的频道列表，为什么定义一个空数组呢，因为响应回来的数据是放到了一个数组中，所有我们初始化这个变量的时候就要初始化一个空数组
       channellist: [],
       // 定义一个接收时间的变量 开始时间和结束时间
-      rangeDate: []
+      rangeDate: [],
+      page: 1
     }
   },
   // 方法区
@@ -195,6 +196,7 @@ export default {
       this.loading = true
       // 获取一下token值
       const token = window.localStorage.getItem('token')
+
       // 发送axios请求
       this.$axios({
         // url地址
@@ -223,6 +225,7 @@ export default {
         console.log(res)
         // 将res的返回值中的数据赋值给到data中定义的数组
         this.listdata = res.data.data.results
+        // 将内容赋值到总页数
         this.pageCount = res.data.data.total_count
         // 打印一下这个数组
         console.log(this.listdata)
@@ -231,22 +234,45 @@ export default {
         this.loading = false
       })
     },
-    // // 点击页面的时候调用的方法，这个形参page是这个事件的默认参数，形参名字随便写
+    // 点击页面的时候调用的方法，这个形参page是这个事件的默认参数，形参名字随便写
     onPageChange (page) {
-      console.log(page)
+      // console.log(page)
+      // 记录一下这个当前页
+      this.page = page
       // 现在这个当前页面的页码获取到了，需要将这个页面 发送请求
       this.getcontent(page)
     },
-    // 点击删除按钮
-    onDelete () {
-      // alert('我是删除按钮')
+    onDelete (articleId) {
+      // 获取一下本地token值
+      const token = window.localStorage.getItem('token')
+      console.log(token)
       // this.$confirm是elementUI组件库中提供的一种特殊的组件调用方式
-      this.$confirm('确定要删除吗')
+      // this.$confirm('确定要删除吗')
+      // 打印一下id
+      console.log(articleId)
+      // 发送请求/articles/:target
+      this.$axios({
+        // 请求地址
+        url: `/articles/${articleId}`,
+        // 请求方式
+        method: 'DELETE',
+        // 发送请求头 中的token值
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }).then(res => {
+        console.log(res)
+        // 删除成功之后，需要重新加载一下当前页
+        this.getcontent(this.page)
+      }).catch(err => {
+        console.log(err, '删除失败')
+      })
     },
     // 点击编辑按钮
     onEdit () {
       alert('我是编辑按钮')
     },
+
     // 获取频道列表的方法，里面发送一个请求
     Channellist () {
       this.$axios({
