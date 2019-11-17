@@ -18,31 +18,32 @@
           v-model="article.content"
           ref="myQuillEditor"
           >
-
           </quill-editor>
         </el-form-item>
       <!-- 富文本编辑器end -->
-      <!-- 下拉框start -->
-      <el-form-item label="频道">
-        <!-- select 需要得到的是一个id值  循环生成谁就将v-for添加到谁的上边
-        :value 是获取的id值
-        :label 是展示的内容
-        -->
-        <el-select placeholder="请选择频道" v-model="article.channel_id">
-          <el-option
-          v-for="(item, index) in channellist"
-          :label="item.name"
-          :value="item.id"
-          :key="index"></el-option>
-        </el-select>
-      </el-form-item>
-      <!-- 下拉框end -->
-      <!-- 按钮start -->
-      <el-form-item>
-        <el-button type="primary" @click="onPublish(false)" size="small">发表</el-button>
-        <el-button size="small" @click="onPublish(true)">存入草稿</el-button>
-      </el-form-item>
-      <!-- 按钮end -->
+      <div class="drop-down">
+        <!-- 下拉框start -->
+        <el-form-item  label="频道">
+          <!-- select 需要得到的是一个id值  循环生成谁就将v-for添加到谁的上边
+          :value 是获取的id值
+          :label 是展示的内容
+          -->
+          <el-select placeholder="请选择频道" v-model="article.channel_id">
+            <el-option
+            v-for="(item, index) in channellist"
+            :label="item.name"
+            :value="item.id"
+            :key="index"></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 下拉框end -->
+        <!-- 按钮start -->
+        <el-form-item>
+          <el-button type="primary" @click="onPublish(false)" size="small">发表</el-button>
+          <el-button size="small" @click="onPublish(true)">存入草稿</el-button>
+        </el-form-item>
+        <!-- 按钮end -->
+      </div>
     </el-form>
   </el-card>
 </template>
@@ -162,5 +163,13 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less">
+// 给富文本一个高度
+.quill-editor{
+  height: 300px;
+}
+// 按钮距离富文本的距离
+.drop-down{
+  margin-top: 120px;
+}
 </style>
