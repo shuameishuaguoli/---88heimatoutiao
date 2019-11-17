@@ -243,29 +243,44 @@ export default {
       this.getcontent(page)
     },
     onDelete (articleId) {
-      // 获取一下本地token值
-      const token = window.localStorage.getItem('token')
-      console.log(token)
-      // this.$confirm是elementUI组件库中提供的一种特殊的组件调用方式
-      // this.$confirm('确定要删除吗')
-      // 打印一下id
-      console.log(articleId)
-      // 发送请求/articles/:target
-      this.$axios({
+      this.$confirm('确认要删除此条文章吗, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 获取一下本地token值
+        const token = window.localStorage.getItem('token')
+        console.log(token)
+        // this.$confirm是elementUI组件库中提供的一种特殊的组件调用方式
+        // this.$confirm('确定要删除吗')
+        // 打印一下id
+        console.log(articleId)
+        // 发送请求/articles/:target
+        this.$axios({
         // 请求地址
-        url: `/articles/${articleId}`,
-        // 请求方式
-        method: 'DELETE',
-        // 发送请求头 中的token值
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }).then(res => {
-        console.log(res)
-        // 删除成功之后，需要重新加载一下当前页
-        this.getcontent(this.page)
-      }).catch(err => {
-        console.log(err, '删除失败')
+          url: `/articles/${articleId}`,
+          // 请求方式
+          method: 'DELETE',
+          // 发送请求头 中的token值
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }).then(res => {
+          console.log(res)
+          // 删除成功之后，需要重新加载一下当前页
+          this.getcontent(this.page)
+        }).catch(err => {
+          console.log(err, '删除失败')
+        })
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     },
     // 点击编辑按钮

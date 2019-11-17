@@ -106,6 +106,24 @@ export default {
     },
     // 发表文章的方法
     onPublish (draft) {
+      if (draft) {
+        this.$message({
+          message: '存为草稿成功哦~~',
+          type: 'success'
+        })
+        // 调用一下发布文章的方法
+        this.publishArticle(draft)
+      } else {
+        this.$message({
+          message: '发布文章成功哦~~',
+          type: 'success'
+        })
+        // 调用一下发布文章的方法
+        this.publishArticle(draft)
+      }
+    },
+    // 封装一个发布文章的方法
+    publishArticle (draft) {
       // 获取token值
       const token = window.localStorage.getItem('token')
       console.log(token)
