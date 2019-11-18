@@ -107,20 +107,42 @@ export default {
     },
     // 发表文章的方法
     onPublish (draft) {
-      if (draft) {
-        this.$message({
-          message: '存为草稿成功哦~~',
-          type: 'success'
-        })
-        // 调用一下发布文章的方法
-        this.publishArticle(draft)
+      // 点击发布和存入草稿之后需要判断有没有id
+      // 获取一下文章ID
+      let articleID = this.$route.params.articleID
+      console.log('我的ID是', articleID)
+      if (articleID) {
+        if (draft) {
+          // 调用一下编辑文章的方法
+          this.editArticle(articleID, draft)
+          this.$message({
+            message: '编辑草稿成功哦~~',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: '编辑文章成功哦~~',
+            type: 'success'
+          })
+          // 调用一下编辑文章的方法
+          this.editArticle(articleID, draft)
+        }
       } else {
-        this.$message({
-          message: '发布文章成功哦~~',
-          type: 'success'
-        })
-        // 调用一下发布文章的方法
-        this.publishArticle(draft)
+        if (draft) {
+          this.$message({
+            message: '存为草稿成功哦~~',
+            type: 'success'
+          })
+          // 调用一下发布文章的方法
+          this.publishArticle(draft)
+        } else {
+          this.$message({
+            message: '发布文章成功哦~~',
+            type: 'success'
+          })
+          // 调用一下发布文章的方法
+          this.publishArticle(draft)
+        }
       }
     },
     // 封装一个发布文章的方法
@@ -153,12 +175,67 @@ export default {
       }).catch(erro => {
         console.log('发表失败', erro)
       })
+    },
+    // 封装一个获取指定文章的内容
+    getIDArticle () {
+      //  获取一下token
+      const token = window.localStorage.getItem('token')
+      // 获取一下这个从前面带过来的ID
+      let articleID = this.$route.params.articleID
+      console.log(articleID)
+      // 然后我们拿着这个id获取响应的文章的内容
+      this.$axios({
+        // 请求地址
+        url: `/articles/${articleID}`,
+        // 请求方式
+        method: 'GET',
+        // 请求中携带token
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }).then(res => {
+        // 打印一下根据ID获取到的数据
+        console.log(res)
+        // 将获取到的文章数据赋值给到定义好的对象中
+        this.article = res.data.data
+        console.log(this.article)
+      })
+    },
+    // 封装一个根据ID修改文章的方法
+    editArticle (articleid, draft) {
+      // 获取一下本地的token
+      const token = window.localStorage.getItem('token')
+      // 发送请求
+      this.$axios({
+        // 请求路径
+        url: `/articles/${articleid}`,
+        // 请求方式
+        method: 'PUT',
+        // 在请求头中携带token值
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        // 发送query数据
+        params: {
+          draft
+        },
+        // 发送body数据
+        data: this.article
+      }).then(res => {
+        console.log(res)
+        // 编辑修改成功之后需要跳转一下文章列表页面
+        this.$router.push('/content')
+      }).catch(erro => {
+        console.log(erro, '编辑失败')
+      })
     }
   },
   // 组件加载时执行的选项
   created () {
     // 调用一下获取所有频道的方法
     this.getChannel()
+    // 调用一下根据ID获取相应文章的方法
+    this.getIDArticle()
   }
 }
 </script>

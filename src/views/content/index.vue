@@ -108,7 +108,7 @@
               <!-- 两个按钮也是使用template标签  自定义标签-->
               <template slot-scope="scope">
                 <el-button type="danger" @click="onDelete(scope.row.id)">删除</el-button>
-                <el-button type="primary" @click="onEdit">编辑</el-button>
+                <el-button type="primary" @click="$router.push('/article/'+scope.row.id)">编辑</el-button>
               </template>
             </el-table-column>
           </el-table>

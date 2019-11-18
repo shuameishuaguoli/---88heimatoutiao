@@ -12,6 +12,8 @@ import article from '@/views/article/'
 import content from '@/views/content/'
 // 引入comment 评论组件
 import comment from '@/views/comment'
+// 引入修改评论组件
+// import editcomment from '@/views/comment/editComment'
 // 引入nprogress包
 import NProgress from 'nprogress'
 Vue.use(VueRouter)
@@ -31,10 +33,13 @@ const routes = [{
     path: '/article',
     component: article // 发布文章页面
   }, {
+    path: '/article/:articleID',
+    component: article // 点击编辑跳转到发布文章页面
+  }, {
     path: '/content',
     component: content // 内容页面
   }, {
-    path: '/comment',
+    path: '/comment', // 评论页面
     component: comment
   }]
 }

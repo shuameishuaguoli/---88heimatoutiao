@@ -1,9 +1,12 @@
 <template>
   <div>
     <!-- 评论列表的卡片start -->
-    <el-card class="box-card">
+    <el-card
+    class="box-card"
+    v-loading="loading"
+    >
         <div slot="header" class="clearfix">
-          <span>品论管理</span>
+          <span>评论管理-共找到{{totleChange}}条数据</span>
         </div>
       <!-- 表格table start -->
         <el-table
@@ -39,12 +42,31 @@
           <el-table-column
             prop="address"
             label="操作">
+            <template>
+                <el-button
+                size="small"
+                type="primary"
+                >
+                修改
+                </el-button>
+            </template>
           </el-table-column>
     </el-table>
       <!-- 表格table end -->
-
     </el-card>
     <!-- 评论列表的卡片end -->
+    <!-- 页码卡片start :disabled="loading"这个属性是页码禁用-->
+    <el-card class="pagecard">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="totleChange"
+          @current-change="currentChange"
+          :disabled="loading"
+          >
+        </el-pagination>
+    </el-card>
+    <!-- 页码卡片end -->
   </div>
 </template>
 
@@ -56,13 +78,21 @@ export default {
   data () {
     return {
       // 在模型中定义一个数组，用来接收一下从服务器响应回来是所有评论的数据列表，这里要知道问什么定义一个数组类型，其实主要是根据服务器响应回来的数据的类型来定义的，因为服务器响应回来的评论列表的数据类型是一个数组类型，为了方便赋值，所以我们要定义一个空数组来接收一下
-      commentlist: []
+      commentlist: [],
+      // 初始化一个page用来接收当前页
+      page: 1,
+      // 初始化一个totleChange用来接收总页码
+      totleChange: 0,
+      // 初始化一个loading为true，这是等待效果
+      loading: true
     }
   },
   // 方法区
   methods: {
     // 定义一个方法是获取所有的评论类表的数据
-    getCommentList () {
+    getCommentList (page) {
+      // 调用方法的时候开启loading
+      this.loading = true
       // 获取一下存放到本地的token值
       const token = window.localStorage.getItem('token')
       // 发送请求
@@ -74,15 +104,22 @@ export default {
           Authorization: `Bearer ${token}`
         },
         params: {
+          page,
           // 后面的值传一个字符串类型
           response_type: 'comment'
         }
       }).then(res => {
         console.log(res)
+        // 把后台响应回来的数据赋值给到定义好的数组中
         this.commentlist = res.data.data.results
         console.log(this.commentlist)
+        // 把总页数赋值给到总页数变量
+        this.totleChange = res.data.data.total_count
       }).catch(erro => {
         console.log('评论获取失败', erro)
+      }).finally(() => {
+        // 在finnaly中关闭掉loading
+        this.loading = false
       })
     },
     // 定义一个方法是改变评论状态的方法，改变请求状态是要发送请求的
@@ -128,6 +165,13 @@ export default {
       }).catch(erro => {
         console.log(erro, '状态修改失败')
       })
+    },
+    // 点击页码的时候调用这个方法
+    currentChange (page) {
+      // 获取一下当前页面
+      console.log(page)
+      // 调用一下获取评论列表的方法
+      this.getCommentList(page)
     }
   },
   // 生命周期的钩子函数  组件还没有渲染完成阶段
@@ -138,5 +182,12 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less">
+// 页码样式
+.pagecard{
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>

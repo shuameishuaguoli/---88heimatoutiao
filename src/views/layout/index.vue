@@ -44,7 +44,10 @@
         <!-- 中间内容区域 -->
         <el-main>
           <!-- 二级路由容器，子路由会渲染到这里 -->
-          <router-view></router-view>
+          <router-view>
+            <!-- 三级路由器 -->
+            <router-view></router-view>
+          </router-view>
         </el-main>
       </el-container>
     </el-container>
