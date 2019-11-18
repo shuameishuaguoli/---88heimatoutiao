@@ -24,8 +24,17 @@
             label="粉丝评论数据">
           </el-table-column>
           <el-table-column
-            prop="address"
             label="评论状态">
+            <!-- 使用template的前提是：我们需要知道在elementUI这个工具中若是使用表格组件儿的话，表格组件儿默认渲染的内容只能是文本内容（也就是文字），若是想在表格中渲染其他格式的内容，比如说图片（img），按钮（button）等等，我们就要使用template标签，template标签有一个属性是slot-scope="scope"，这个顺序性相当于我们使用的v-for，template标签中的子标签使用的scope.row相当于v-for中遍历出来的内个每一项item，我们如果想要获取到每一项下的属性的时候，我们就直接scope.row . (点)就行啦-->
+            <template slot-scope="scope">
+                <el-switch
+                  v-model="scope.row.comment_status"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  @change="onChange(scope.row)"
+                  >
+                </el-switch>
+            </template>
           </el-table-column>
           <el-table-column
             prop="address"
@@ -73,7 +82,51 @@ export default {
         this.commentlist = res.data.data.results
         console.log(this.commentlist)
       }).catch(erro => {
-        console.log('评论获取是被', erro)
+        console.log('评论获取失败', erro)
+      })
+    },
+    // 定义一个方法是改变评论状态的方法，改变请求状态是要发送请求的
+    onChange (scopRow) {
+      // 获取token值
+      const token = window.localStorage.getItem('token')
+      // 发送请求
+      this.$axios({
+        // 请求地址
+        url: '/comments/status',
+        // 请求方式
+        method: 'PUT',
+        // 在请求头中携带token
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        // 将id放到params中
+        params: {
+          // 这里要注意，这个id一定要转成字符串形式
+          article_id: scopRow.id.toString()
+        },
+        data: {
+          allow_comment: scopRow.comment_status
+        }
+      }).then(res => {
+        // console.log(res)
+        // 打印一下当前的开关状态
+        console.log(scopRow.comment_status)
+        // scopRow.comment_status?true:false
+        if (scopRow.comment_status) {
+          this.$message({
+            message: '评论状态已开启',
+            type: 'success',
+            showClose: true // 弹窗可关闭
+          })
+        } else {
+          this.$message({
+            message: '评论状态已关闭',
+            type: 'error',
+            showClose: true // 弹窗可关闭
+          })
+        }
+      }).catch(erro => {
+        console.log(erro, '状态修改失败')
       })
     }
   },
