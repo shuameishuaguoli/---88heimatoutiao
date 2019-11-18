@@ -10,6 +10,8 @@ import home from '@/views/home/'
 import article from '@/views/article/'
 // 引入content 内容列表组件
 import content from '@/views/content/'
+// 引入comment 评论组件
+import comment from '@/views/comment'
 // 引入nprogress包
 import NProgress from 'nprogress'
 Vue.use(VueRouter)
@@ -31,6 +33,9 @@ const routes = [{
   }, {
     path: '/content',
     component: content // 内容页面
+  }, {
+    path: '/comment',
+    component: comment
   }]
 }
   // 配置按需加载的路由
