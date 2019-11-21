@@ -42,10 +42,11 @@
           <el-table-column
             prop="address"
             label="操作">
-            <template>
+            <template slot-scope="scope">
                 <el-button
                 size="small"
                 type="primary"
+                @click="$router.push('/editcomment/'+scope.row.id)"
                 >
                 修改
                 </el-button>

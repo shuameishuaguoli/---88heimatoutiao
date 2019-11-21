@@ -13,7 +13,9 @@ import content from '@/views/content/'
 // 引入comment 评论组件
 import comment from '@/views/comment'
 // 引入修改评论组件
-// import editcomment from '@/views/comment/editComment'
+import editcomment from '@/views/editComment'
+// 引入素材组件
+import material from '@/views/material'
 // 引入nprogress包
 import NProgress from 'nprogress'
 Vue.use(VueRouter)
@@ -33,14 +35,22 @@ const routes = [{
     path: '/article',
     component: article // 发布文章页面
   }, {
-    path: '/article/:articleID',
-    component: article // 点击编辑跳转到发布文章页面
+    path: '/article/:articleID', // 点击编辑跳转到发布文章页面 这里需要动态路由
+    component: article
   }, {
     path: '/content',
     component: content // 内容页面
   }, {
     path: '/comment', // 评论页面
     component: comment
+  }, {
+    path: '/editcomment/:editcommentID', // 修改评论页面 这里需要动态路由，所以我们要配置动态参数
+    component: editcomment,
+    // 将路由参数映射给props数据这样获取参数更方便，不用每次是用id的时候，每次都要获取一遍
+    props: true
+  }, {
+    path: '/material',
+    component: material
   }]
 }
   // 配置按需加载的路由
