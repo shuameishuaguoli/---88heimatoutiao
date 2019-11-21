@@ -1,5 +1,13 @@
 <template>
   <el-card class="box-card">
+    <el-button
+    style="float: right;"
+    size="small"
+    type="success"
+    @click="onhandload"
+    >手动上传图片</el-button>
+    <!-- 定义一个文件域标签 因为不是特别好看，所以我们要将这个标签暂时隐藏 属性hidden就可以直接隐藏 -->
+    <input type="file" ref="fileself" hidden @change="fileChange">
   <div slot="header" class="clearfix">
     <span>素材管理</span>
     <!-- 点击上传start
@@ -15,8 +23,9 @@
             :on-success="onloadSuccess"
             :headers="sendHeader"
             name="image"
+            :show-file-list="false"
             >
-            <el-button size="small" type="primary" @click="onUPload">点击上传</el-button>
+            <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
     <!-- 点击上传end -->
 
@@ -189,10 +198,58 @@ export default {
       //   判断一下value的值是不是‘全部’儿子
       this.getImages(value !== '全部')
     },
-    // 图片上传成功之后需要重新加载一下素材图片
+    // 图片上传成功之后调用的方法
     onloadSuccess () {
-      // 调用一下获取所有素材图片的方法
+      // 图片上传成功之后需要重新加载一下素材图片
       this.getImages(this.type !== '全部')
+      //   上传成功之后需要提示一下用户
+      this.$message({
+        message: '图片上传成功',
+        type: 'success'
+      })
+      // 调用一下获取所有素材图片的方法
+    },
+    // 点击自定义方法上传的时候调用的方法
+    onhandload () {
+      // 看看能不能获取file文件域
+      //   console.log(this.$refs.fileself)
+      // 我们要实现点击按钮的时候触发file文件域
+      this.$refs.fileself.click()
+    },
+    // 监听到input file中的内容发生改变的时候，就会触发这个方法
+    fileChange () {
+      // 获取token值
+      const token = window.localStorage.getItem('token')
+      // 首先我们先获取到上传的这个文件对象
+      const fileObj = this.$refs.fileself.files[0]
+      //   创建一个formdata对象
+      const fdata = new FormData()
+      //   手动往表单中添加一个文件  参数1表示的字段名，参数二表示的是存放的文件对象
+      fdata.append('image', fileObj)
+      //   发送请求
+      this.$axios({
+        //   请求地址
+        url: '/user/images',
+        // 请求方式
+        method: 'POST',
+        // 在请求头中携带token值
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        // 发送请求参数，这里传的是fdata对象
+        data: fdata
+      }).then(res => {
+        // console.log(res)
+        // 图片上传成功之后需要重新加载一下素材图片
+        this.getImages(this.type !== '全部')
+        // 上传成功之后需要给用户一个提示
+        this.$message({
+          message: '图片上传成功',
+          type: 'success'
+        })
+      }).catch(erro => {
+        console.log(erro, '上传文件失败')
+      })
     }
 
   },
