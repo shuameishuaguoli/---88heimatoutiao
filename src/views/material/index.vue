@@ -2,11 +2,28 @@
   <el-card class="box-card">
   <div slot="header" class="clearfix">
     <span>素材管理</span>
-    <el-button size="small" type="primary">点击上传</el-button>
+    <!-- 点击上传start
+        on-success：是上传成功后的参数回调
+        headers:是设置上传的请求头
+        name：是上传的数据的字段名  从接口文档中获取
+        文件上传是从标签中发送请求
+    -->
+        <el-upload
+            class="upload-demo"
+            action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
+            multiple
+            :on-success="onloadSuccess"
+            :headers="sendHeader"
+            name="image"
+            >
+            <el-button size="small" type="primary" @click="onUPload">点击上传</el-button>
+        </el-upload>
+    <!-- 点击上传end -->
+
   </div>
   <div>
-    <el-radio-group v-model="type" size="medium">
-        <el-radio-button label="全部" >全部</el-radio-button>
+    <el-radio-group v-model="type" size="medium" @change="onFind">
+        <el-radio-button label="全部">全部</el-radio-button>
         <el-radio-button label="收藏">收藏</el-radio-button>
     </el-radio-group>
   </div>
@@ -45,6 +62,8 @@
 </template>
 
 <script>
+//   获取token值
+const token = window.localStorage.getItem('token')
 export default {
   // 组件名
   name: 'material',
@@ -54,7 +73,11 @@ export default {
       // 绑定全部or收藏的v-model，默认选中全部
       type: '全部',
       //   定义一个空数组，用来接收一下从后台获取的所有图片素材
-      allimages: []
+      allimages: [],
+      //   给上传组件用的请求头
+      sendHeader: {
+        Authorization: `Bearer ${token}`
+      }
     }
   },
   //   方法区
@@ -154,11 +177,24 @@ export default {
             type: 'success'
           })
         }
+        // 更新视图展示
         item.is_collected = !item.is_collected
       }).catch(erro => {
         console.log(erro, '删除失败')
       })
+    },
+    // 点击收藏的时候需要调用一下获取全部
+    onFind (value) {
+      console.log(value)
+      //   判断一下value的值是不是‘全部’儿子
+      this.getImages(value !== '全部')
+    },
+    // 图片上传成功之后需要重新加载一下素材图片
+    onloadSuccess () {
+      // 调用一下获取所有素材图片的方法
+      this.getImages(this.type !== '全部')
     }
+
   },
   //   在声明周期created中
   created () {
