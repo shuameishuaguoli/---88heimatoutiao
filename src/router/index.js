@@ -16,6 +16,8 @@ import comment from '@/views/comment'
 import editcomment from '@/views/editComment'
 // 引入素材组件
 import material from '@/views/material'
+// 引入账户信息页面
+import account from '@/views/account'
 // 引入nprogress包
 import NProgress from 'nprogress'
 Vue.use(VueRouter)
@@ -51,6 +53,9 @@ const routes = [{
   }, {
     path: '/material',
     component: material
+  }, {
+    path: '/account', // 配置账户信息路由表
+    component: account
   }]
 }
   // 配置按需加载的路由
