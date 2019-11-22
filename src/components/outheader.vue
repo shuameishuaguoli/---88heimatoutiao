@@ -70,7 +70,9 @@
 </template>
 
 <script>
-// 在头部定于
+// 因为是头部的信息要跟更新后的用户书数据进行更新，所以是头部进行订阅，账户信息页进行发布
+// 先引入eventbus
+import eventbus from '@/utilsbus/eventbus.js'
 export default {
   name: 'objheader',
   data () {
@@ -137,6 +139,13 @@ export default {
   created () {
     // 调用一下获取用户信息的方法
     this.getUserinfo()
+    // 在钩子函数中监听自定义事件
+    eventbus.$on('upload-user', userinfo => {
+      // this.userinfo = userinfo
+      this.userinfo.name = userinfo.name
+      this.userinfo.photo = userinfo.photo
+      // console.log('我被调用了')
+    })
   }
 }
 </script>

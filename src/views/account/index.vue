@@ -38,6 +38,8 @@
 </template>
 
 <script>
+// 引入eventbus
+import eventbus from '@/utilsbus/eventbus.js'
 export default {
   // 给组件取一个名字
   name: 'account',
@@ -104,6 +106,8 @@ export default {
         data: this.userinfo
       }).then(res => {
         console.log(res)
+        // 用户信息更新成功之后，需要发布一下，通知头部组件，用户信息更改了，头部组件也要更改一下，后面可以传参数
+        eventbus.$emit('upload-user', this.userinfo)
         this.$message({
           message: '用户信息修改成功',
           type: 'success'
@@ -142,6 +146,8 @@ export default {
         })
         // 为了达到本地预览的功能，我们要将res中的photo的地址赋值给到data中photo
         this.userinfo.photo = res.data.data.photo
+        // 用户信息更新成功之后，需要发布一下，通知头部组件，用户信息更改了，头部组件也要更改一下
+        eventbus.$emit('upload-user', this.userinfo)
         console.log(this.photo)
       }).catch(erro => {
         console.log(erro, '用户头像上传失败')
