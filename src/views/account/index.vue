@@ -1,15 +1,18 @@
 <template>
         <!-- form表单中绑定的是整个信息对象 -->
     <el-form style="width:500px" :model="userinfo" label-width="80px">
-        <!-- 用户头像start -->
+        <!-- 用户头像start
+            从接口文档中我们得知，用户头像的请求方式是patch，而我们使用的elementUI中的el-upload默认的上传方式是post，所以我们要自定义上传方式，我们要使用http-request这个属性，这个属性的意思是覆盖默认的上传行为，可以自定义上传的实现
+        -->
         <el-form-item label="用户头像">
             <el-upload
                 class="avatar-uploader"
                 action="https://jsonplaceholder.typicode.com/posts/"
                 :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload">
-                <img width="100" v-if="imageUrl" :src="imageUrl" class="avatar">
+                :http-request="onloadimg"
+                 >
+                 <!-- 这里的v-if和v-else是一个判断的条件：意思是如果有图片，那么我就要显示图片，如果没有图片，好，那么我就显示加号 -->
+                <img width="100" v-if="userinfo.photo" :src="userinfo.photo" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
         </el-form-item>
@@ -45,14 +48,14 @@ export default {
       userinfo: {
         //   用户昵称
         name: '',
+        // 用户头像
+        photo: '',
         // 个人介绍
         intro: '',
         // 用户邮箱
         email: '',
         // 用户手机
-        mobile: '',
-        // 用户头像
-        photo: ''
+        mobile: ''
       }
     }
   },
@@ -108,6 +111,40 @@ export default {
       }).catch(erro => {
         console.log(erro, '用户信息修改失败')
         this.$message.error('用户信息修改失败')
+      })
+    },
+    // 封装一个用户头像上传的方法
+    onloadimg (config) {
+      // 获取请求头
+      const token = window.localStorage.getItem('token')
+      // new 一个formdata对象
+      const fd = new FormData()
+      console.log(config)
+      // 在fd中添加字段，字段名要根据接口文档来
+      fd.append('photo', config.file)
+      //   发送请求
+      this.$axios({
+        // 请求地址
+        url: '/user/photo',
+        // 请求方式
+        method: 'PATCH',
+        // 发送data数据
+        data: fd,
+        // 在请求头中携带token
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }).then(res => {
+        console.log(res)
+        this.$message({
+          message: '用户信息修改成功',
+          type: 'success'
+        })
+        // 为了达到本地预览的功能，我们要将res中的photo的地址赋值给到data中photo
+        this.userinfo.photo = res.data.data.photo
+        console.log(this.photo)
+      }).catch(erro => {
+        console.log(erro, '用户头像上传失败')
       })
     }
   },

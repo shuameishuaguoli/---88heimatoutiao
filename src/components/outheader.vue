@@ -35,12 +35,12 @@
                 <span style="font-size:20px">消息</span>
               </el-tooltip>
             <!-- 引入头像  其实真正是从数据库中请求到头像显示在这儿的 -->
-            <img src="../assets/img/gongfu.jpg" alt="">
+            <img :src="userinfo.photo" alt="">
             <!-- 显示用户的登录名儿和点击后的下拉菜单 -->
             <el-row class="header-username">
               <el-col>
                 <el-dropdown trigger="click">
-                  <span>爱动的MC<i class="el-icon-arrow-down el-icon--right"></i></span>
+                  <span>{{userinfo.name}}<i class="el-icon-arrow-down el-icon--right"></i></span>
                   <!-- 用户名下的下拉菜单 -->
                   <el-dropdown-menu>
                       <el-dropdown-item>
@@ -70,12 +70,22 @@
 </template>
 
 <script>
+// 在头部定于
 export default {
+  name: 'objheader',
   data () {
     return {
+      userinfo: {
+        //   用户昵称
+        name: '',
+        // 用户头像
+        photo: ''
+      }
     }
   },
+  // 方法区
   methods: {
+    // 退出时调用的方法
     onGoout () {
       this.$confirm('确定要退出吗', '提示', {
         confirmButtonText: '确定',
@@ -97,7 +107,36 @@ export default {
           message: '已取消退出'
         })
       })
+    },
+    // 封装一个获取用户登录信息的方法
+    getUserinfo () {
+      // 获取本地token
+      const token = window.localStorage.getItem('token')
+      //   发送请求
+      this.$axios({
+        // 请求地址
+        url: '/user/profile',
+        // 请求方式
+        method: 'GET',
+        // 在请求头中携带token值
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }).then(res => {
+        //   打印一下从后台获取到的数据
+        console.log(res)
+        // 将获取到的用户数据赋值给到我们定义好的对象上
+        this.userinfo = res.data.data
+        console.log(this.userinfo)
+      }).catch(erro => {
+        console.log(erro, '获取用户信息失败')
+      })
     }
+  },
+  // 钩子函数
+  created () {
+    // 调用一下获取用户信息的方法
+    this.getUserinfo()
   }
 }
 </script>
