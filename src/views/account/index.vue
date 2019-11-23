@@ -141,7 +141,7 @@ export default {
       }).then(res => {
         console.log(res)
         this.$message({
-          message: '用户信息修改成功',
+          message: '用户头像上传成功',
           type: 'success'
         })
         // 为了达到本地预览的功能，我们要将res中的photo的地址赋值给到data中photo

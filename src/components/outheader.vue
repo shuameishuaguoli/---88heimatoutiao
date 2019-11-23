@@ -186,7 +186,8 @@ export default {
       justify-content: space-between;
       // 头像样式
       img{
-        width: 40px;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
         margin-right: 10px;
       }

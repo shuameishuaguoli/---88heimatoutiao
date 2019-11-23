@@ -37,6 +37,30 @@
           </el-select>
         </el-form-item>
         <!-- 下拉框end -->
+        <!-- 上传封面图片start -->
+        <el-form-item label="封面">
+          <!-- group中绑定的数据是图片的个数 -->
+           <el-radio-group v-model="article.cover.type">
+            <el-radio :label="1">单图</el-radio>
+            <el-radio :label="3">三图</el-radio>
+            <el-radio :label="0">无图</el-radio>
+            <el-radio :label="-1">自动</el-radio>
+          </el-radio-group>
+          <!-- 组件肯定是遍历出来的，因为有单图和三图和无图
+            遍历的个数要和article.cover.type中的数字要进行绑定
+            因为数字为-1的时候，控制台就会报错儿，因为v-for不能遍历数字为-1的个数
+            所以我们要在遍历项外边儿添加包一层template标签，用来判断一下article.cover.type的值，只有!=-1的时候，才能进行循环，==-1就不循环，这样就避免了报错儿
+           -->
+           <template v-if="article.cover.type !== -1">
+             <el-row :gutter="20">
+               <!-- :gutter="20" 每个格子之间的间隔是20px -->
+               <el-col :span="4" v-for="item in article.cover.type" :key="item">
+                <actioveUploadimg ></actioveUploadimg>
+               </el-col>
+             </el-row>
+           </template>
+        </el-form-item>
+        <!-- 上传封面图片end -->
         <!-- 按钮start -->
         <el-form-item>
           <el-button type="primary" @click="onPublish(false)" size="small">发表</el-button>
@@ -53,13 +77,17 @@
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+// 加载上传图片的组件
+import actioveUploadimg from './components/uploadimg.vue'
 // 加载富文本编辑器的核心组件
 import { quillEditor } from 'vue-quill-editor'
 export default {
   name: 'PublishArticles',
   components: {
     // 注册局部组件
-    quillEditor
+    quillEditor,
+    // 注册上传图片组件
+    actioveUploadimg
   },
   // 模型区
   data () {
@@ -74,9 +102,9 @@ export default {
         channel_id: '',
         // 这个图片的对象我们先给写死，因为我们还没有开始做上传图片的功能
         cover: {
-          // 0表示的是无图
-          type: 0,
-          // 无图就是一个空数组
+          // 0表示的是无图 1表示1张图 3表示3张图 -1是自动
+          type: 1,
+          // 无图就是一个空数组，这个数组需要存储的是选中的图片的路径提交给后台
           images: []
         }
       },
